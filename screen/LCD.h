@@ -1,0 +1,12 @@
+
+#define USER 0x10
+#define PASS 0x15
+#define ENTER 0x20
+#define CAR_ID 0x25
+#define SEND 0x30
+#define ID 0x100
+#define COLOR 0x105
+#define MODEL 0x110
+#define NODE 0x115
+#define LAT 0x120
+#define LONG 0x125

@@ -1,0 +1,87 @@
+
+#include <SoftwareSerial.h>
+SoftwareSerial mySerial(16,17);
+#include"MyLibrary.h"
+#include "LCD.h"
+#include "SPI.h"
+
+
+uint8_t Data;
+char* username = "Mohamed";
+char* password = "1234";
+
+char *user;
+char *pass;
+char *car_id;
+void setup() {
+  Serial.begin(115200);
+  mySerial.begin(115200);
+  delay(2000);
+  GO_PAGE(0);
+}
+
+void loop() { 
+
+  Data= ReadData();
+  Serial.print("------------------------------");
+  Serial.print("VP :");  Serial.println(VP,HEX);
+  Serial.print("VV :");  Serial.println(VV,HEX);
+  Serial.print("------------------------------");
+
+  switch(VP)
+  {
+    case 0x1001:{
+      switch(VV)
+      {
+        case ENTER:{
+          if( strcmp(username, user) == 0 && strcmp(password, pass) == 0)
+          {
+            GO_PAGE(1);
+          }
+          else
+          {
+             GO_PAGE(2);
+          }
+        }
+      }
+      break;
+    }
+  case 0x10f4:{
+      switch(VV)
+      {   case USER:{
+          for(byte i=0; i<buff[5]; i++)
+          {
+            user[i]=buff[i+6];
+            Serial.write(buff[i+6]);
+          }
+          Serial.println();
+          break;
+        }
+        case PASS:{
+          for(byte i=0; i<buff[5]; i++)
+          {
+            pass[i]=buff[i+6];
+            Serial.write(buff[i+6]);
+          }
+          Serial.println();
+          break;
+        }
+        case CAR_ID:{
+          for(byte i=0; i<buff[5]; i++)
+          {
+            car_id[i]=buff[i+6];
+            Serial.write(buff[i+6]);
+          }
+          Serial.println();
+          break;
+        }
+      }
+      break;
+    }     
+  }
+
+}
+    
+
+
+

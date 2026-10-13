@@ -1,0 +1,16 @@
+
+16:53:44.400 -> recieve time: 1032 us
+16:53:45.386 -> send time: 819 us
+16:53:45.421 -> latency: 213 us
+16:53:46.358 -> recieve time: 3002 us
+16:53:47.371 -> send time: 2782 us
+16:53:47.403 -> latency: 220 us
+16:53:48.383 -> recieve time: 3001 us
+16:53:49.364 -> send time: 2782 us
+16:53:49.403 -> latency: 219 us
+16:53:50.385 -> recieve time: 1073 us
+16:53:51.402 -> send time: 823 us
+16:53:51.444 -> latency: 250 us
+16:53:52.395 -> recieve time: 1071 us
+16:53:53.378 -> send time: 819 us
+16:53:53.414 -> latency: 252 us

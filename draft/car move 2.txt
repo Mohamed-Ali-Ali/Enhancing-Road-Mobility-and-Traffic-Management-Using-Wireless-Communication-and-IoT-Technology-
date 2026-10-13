@@ -1,0 +1,51 @@
+char t;
+2 
+3void setup() {
+4pinMode(13,OUTPUT);   //left motors  forward
+5pinMode(12,OUTPUT);   //left motors reverse
+6pinMode(11,OUTPUT);   //right  motors forward
+7pinMode(10,OUTPUT);   //right motors reverse
+8pinMode(9,OUTPUT);   //Led
+9Serial.begin(9600);
+10 
+11}
+12 
+13void loop() {
+14if(Serial.available()){
+15  t = Serial.read();
+16  Serial.println(t);
+17}
+18 
+19if(t == 'F'){            //move  forward(all motors rotate in forward direction)
+20  digitalWrite(13,HIGH);
+21  digitalWrite(11,HIGH);
+22}
+23 
+24else if(t == 'B'){      //move reverse (all  motors rotate in reverse direction)
+25  digitalWrite(12,HIGH);
+26  digitalWrite(10,HIGH);
+27}
+28  
+29else if(t == 'L'){      //turn right (left side motors rotate in forward direction,  right side motors doesn't rotate)
+30  digitalWrite(11,HIGH);
+31}
+32 
+33else  if(t == 'R'){      //turn left (right side motors rotate in forward direction, left  side motors doesn't rotate)
+34  digitalWrite(13,HIGH);
+35}
+36
+37else if(t ==  'W'){    //turn led on or off)
+38  digitalWrite(9,HIGH);
+39}
+40else if(t == 'w'){
+41  digitalWrite(9,LOW);
+42}
+43 
+44else if(t == 'S'){      //STOP (all motors stop)
+45  digitalWrite(13,LOW);
+46  digitalWrite(12,LOW);
+47  digitalWrite(11,LOW);
+48  digitalWrite(10,LOW);
+49}
+50delay(100);
+51}s

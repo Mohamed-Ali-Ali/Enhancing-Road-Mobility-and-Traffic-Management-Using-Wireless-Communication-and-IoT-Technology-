@@ -1,0 +1,305 @@
+
+uint8_t SetMin3 = 0,SetCool3=0,Cry3State=0;
+uint8_t RunCry3Min=0,RunCry3Sec=0;
+uint32_t TimCry3=0;
+
+
+
+
+
+
+
+uint8_t index  , data  , append , response , FR_LEN = 8  ; // frame varibles
+char buff [20] ;
+
+int xyz ;
+uint16_t VP , VV , VS;
+uint16_t Lx, SDD, DWYear, DWMonth, DWDay, DWHours, DWMinutes, DWSecond;
+float Number ;
+//uint8_t Sy,Sm,Sd,SHr,SMi;
+void Serialbegin1( uint8_t RXPin, uint8_t TXPin) {
+
+}
+void Serialbegin( uint16_t Rate) {
+  mySerial.begin(Rate);
+}
+void GO_PAGE( uint16_t PG) {
+  mySerial.write(0x5A);     mySerial.write(0xA5);
+  mySerial.write(0x07);     mySerial.write(0x82);
+  mySerial.write((byte)00); mySerial.write(0x84);
+  mySerial.write(0x5A);     mySerial.write(0x01);
+  mySerial.write(PG >> 8);  mySerial.write(PG % 256);
+}
+void PUT( uint16_t VP , uint16_t VU) {
+  mySerial.write(0x5A); mySerial.write(0xA5);
+  mySerial.write(0x05); mySerial.write(0x82);
+  mySerial.write(VP >> 8); mySerial.write(VP % 256);
+  mySerial.write(VU >> 8); mySerial.write(VU % 256);
+}
+void PUT4( uint16_t VP , uint16_t VU) {
+  mySerial.write(0x5A); mySerial.write(0xA5);
+  mySerial.write(0x05); mySerial.write(0x82);
+  mySerial.write(VP >> 8); mySerial.write(VP % 256);
+  mySerial.write(2); mySerial.write(4);
+  mySerial.write(3); mySerial.write(2);
+}
+void WriteChar(uint16_t VP,char CH){
+  mySerial.write(0x5A); mySerial.write(0xA5);
+  mySerial.write(CH+5); mySerial.write(0x82);
+  mySerial.write(VP >> 8); mySerial.write(VP % 256);
+}
+
+void PUTRTC( uint16_t VP , uint8_t T, uint8_t T1) {
+  mySerial.write(0x5A); mySerial.write(0xA5);
+  mySerial.write(0x05); mySerial.write(0x82);
+  mySerial.write(VP >> 8); mySerial.write(VP % 256);
+  mySerial.write(T); mySerial.write(T1);
+}
+void PUT_String( ) {
+  mySerial.write(0x5A); mySerial.write(0xA5);
+  mySerial.write(0x09); mySerial.write(0x82);
+  mySerial.write(0x10); mySerial.write(0x50);
+  mySerial.write(0x41 );  mySerial.write("Afifi" );
+}
+void PUT_Char( uint16_t VP , char CH) {
+  mySerial.write(0x5A); mySerial.write(0xA5);
+  mySerial.write(18); mySerial.write(0x82);
+  mySerial.write(VP >> 8); mySerial.write(VP % 256);
+  mySerial.write(",,yyyy ");
+}
+void PUT_Str( uint16_t VP , String  Str4) {
+  //Serial.println(sizeof(Str4));
+  mySerial.write(0x5A); mySerial.write(0xA5);
+  mySerial.write(sizeof(Str4) + 3); mySerial.write(0x82);
+  mySerial.write(VP >> 8); mySerial.write(VP % 256);
+  //mySerial.write(&Str4);
+}
+void RTCSet(uint8_t Sy, uint8_t Sm, uint8_t Sd, uint8_t SHr, uint8_t SMi) {
+  if (Sy < 10) {
+    Sy = Sy;
+  } else  if (Sy < 20) {
+    Sy = Sy + 6;
+  } else  if (Sy < 30) {
+    Sy = Sy + 12;
+  } else  if (Sy < 40) {
+    Sy = Sy + 18;
+  } else  if (Sy < 50) {
+    Sy = Sy + 24;
+  } else  if (Sy < 60) {
+    Sy = Sy + 30;
+  } else  if (Sy < 70) {
+    Sy = Sy + 36;
+  }
+  if (Sm < 10) {
+    Sm = Sm;
+  } else  if (Sm < 20) {
+    Sm = Sm + 6;
+  } else  if (Sm < 30) {
+    Sm = Sm + 12;
+  } else  if (Sm < 40) {
+    Sm = Sm + 18;
+  } else  if (Sm < 50) {
+    Sm = Sm + 24;
+  } else  if (Sm < 60) {
+    Sm = Sm + 30;
+  } else  if (Sm < 70) {
+    Sm = Sm + 36;
+  }
+  if (Sd < 10) {
+    Sd = Sd;
+  } else  if (Sd < 20) {
+    Sd = Sd + 6;
+  } else  if (Sd < 30) {
+    Sd = Sd + 12;
+  } else  if (Sd < 40) {
+    Sd = Sd + 18;
+  } else  if (Sd < 50) {
+    Sd = Sd + 24;
+  } else  if (Sd < 60) {
+    Sd = Sd + 30;
+  } else  if (Sd < 70) {
+    Sd = Sd + 36;
+  }
+  if (SHr < 10) {
+    SHr = SHr;
+  } else  if (SHr < 20) {
+    SHr = SHr + 6;
+  } else  if (SHr < 30) {
+    SHr = SHr + 12;
+  } else  if (SHr < 40) {
+    SHr = SHr + 18;
+  } else  if (SHr < 50) {
+    SHr = SHr + 24;
+  } else  if (SHr < 60) {
+    SHr = SHr + 30;
+  } else  if (SHr < 70) {
+    SHr = SHr + 36;
+  }
+  if (SMi < 10) {
+    SMi = SMi;
+  } else  if (SMi < 20) {
+    SMi = SMi + 6;
+  } else  if (SMi < 30) {
+    SMi = SMi + 12;
+  } else  if (SMi < 40) {
+    SMi = SMi + 18;
+  } else  if (SMi < 50) {
+    SMi = SMi + 24;
+  } else  if (SMi < 60) {
+    SMi = SMi + 30;
+  } else  if (SMi < 70) {
+    SMi = SMi + 36;
+  }
+
+}
+void SetRTC(uint8_t Sy, uint8_t Sm, uint8_t Sd, uint8_t SHr, uint8_t SMi) {
+  RTCSet( Sy, Sm, Sd, SHr, SMi);
+  PUTRTC( 0x009C , 0x5A, 0xA5);// Enable RTC Setting
+  PUTRTC( 0x009D , Sy, Sm); // Year & Month
+  PUTRTC( 0x009E , Sd, SHr); // Day & Hour
+  PUTRTC( 0x009F , SMi, 0x00); // Minute & Second
+}
+void ReadingRTC() {
+  mySerial.write(0x5A); mySerial.write(0xA5);
+  mySerial.write(0x04); mySerial.write(0x83); mySerial.write((byte)00);
+  mySerial.write(0x10); mySerial.write(0x04);
+}
+void ReadRTC() {
+  if (DWYear < 10) {
+    DWYear = DWYear;
+  } else  if (DWYear < 32) {
+    DWYear = DWYear - 6;
+  } else  if (DWYear < 48) {
+    DWYear = DWYear - 12;
+  } else  if (DWYear < 64) {
+    DWYear = DWYear - 18;
+  } else  if (DWYear < 80) {
+    DWYear = DWYear - 24;
+  } else  if (DWYear < 96) {
+    DWYear = DWYear - 30;
+  } else  if (DWYear < 112) {
+    DWYear = DWYear - 36;
+  }
+  if (DWMonth < 10) {
+    DWMonth = DWMonth;
+  } else  if (DWMonth < 32) {
+    DWMonth = DWMonth - 6;
+  } else  if (DWMonth < 48) {
+    DWMonth = DWMonth - 12;
+  } else  if (DWMonth < 64) {
+    DWMonth = DWMonth - 18;
+  } else  if (DWMonth < 80) {
+    DWMonth = DWMonth - 24;
+  } else  if (DWMonth < 96) {
+    DWMonth = DWMonth - 30;
+  } else  if (DWMonth < 112) {
+    DWMonth = DWMonth - 36;
+  }
+  if (DWDay < 10) {
+    DWDay = DWDay;
+  } else  if (DWDay < 32) {
+    DWDay = DWDay - 6;
+  } else  if (DWDay < 48) {
+    DWDay = DWDay - 12;
+  } else  if (DWDay < 64) {
+    DWDay = DWDay - 18;
+  } else  if (DWDay < 80) {
+    DWDay = DWDay - 24;
+  } else  if (DWDay < 96) {
+    DWDay = DWDay - 30;
+  } else  if (DWDay < 112) {
+    DWDay = DWDay - 36;
+  }
+  if (DWHours < 10) {
+    DWHours = DWHours;
+  } else  if (DWHours < 32) {
+    DWHours = DWHours - 6;
+  } else  if (DWHours < 48) {
+    DWHours = DWHours - 12;
+  } else  if (DWHours < 64) {
+    DWHours = DWHours - 18;
+  } else  if (DWHours < 80) {
+    DWHours = DWHours - 24;
+  } else  if (DWHours < 96) {
+    DWHours = DWHours - 30;
+  } else  if (DWHours < 112) {
+    DWHours = DWHours - 36;
+  }
+  if (DWMinutes < 10) {
+    DWMinutes = DWMinutes;
+  } else  if (DWMinutes < 32) {
+    DWMinutes = DWMinutes - 6;
+  } else  if (DWMinutes < 48) {
+    DWMinutes = DWMinutes - 12;
+  } else  if (DWMinutes < 64) {
+    DWMinutes = DWMinutes - 18;
+  } else  if (DWMinutes < 80) {
+    DWMinutes = DWMinutes - 24;
+  } else  if (DWMinutes < 96) {
+    DWMinutes = DWMinutes - 30;
+  } else  if (DWMinutes < 112) {
+    DWMinutes = DWMinutes - 36;
+  }
+  if (DWSecond < 10) {
+    DWSecond = DWSecond;
+  } else  if (DWSecond < 32) {
+    DWSecond = DWSecond - 6;
+  } else  if (DWSecond < 48) {
+    DWSecond = DWSecond - 12;
+  } else  if (DWSecond < 64) {
+    DWSecond = DWSecond - 18;
+  } else  if (DWSecond < 80) {
+    DWSecond = DWSecond - 24;
+  } else  if (DWSecond < 96) {
+    DWSecond = DWSecond - 30;
+  } else  if (DWSecond < 112) {
+    DWSecond = DWSecond - 36;
+  }
+
+}
+boolean  Read() {
+  while (mySerial.available() > 0) {
+    data = mySerial.read();
+   // Serial.print("data >>>   "); Serial.println(data, HEX);
+    if (data == 0x4B) {
+   //   Serial.println("-----------------------------------------");
+    }
+    switch (append) {
+      case 0 : if (data == 0x5A) append = 1 ; VS = data;
+        buff[0] = 0; buff[1] = 0; buff[2] = 0; buff[3] = 0; buff[4] = 0;
+        buff[5] = 0; buff[6] = 0; buff[7] = 0; buff[8] = 0; buff[9] = 0;
+        buff[10] = 0; buff[11] = 0; buff[12] = 0; buff[13] = 0; buff[14] = 0;
+        buff[15] = 0; buff[16] = 0; buff[17] = 0; buff[18] = 0; buff[19] = 0;
+        break ;
+      case 1 : if (data == 0xA5) append = 2 ; break ;
+      case 2 : FR_LEN = data ; append = 3 ;
+        break ;
+      case 3 :  buff[index++] = data ;
+        if (buff[0] == 0xffffff83) {
+          if ( index > FR_LEN - 1) {
+            index = 0 ;
+            append = 0  ;
+            if (buff[2] == 0x10 && buff[3] == 0x4) {
+              DWYear    = buff[4];  DWMonth  = buff[5];
+              DWDay     = buff[6];  DWHours  = buff[8];
+              DWMinutes = buff[9];  DWSecond = buff[10];
+              //ReadRTC();
+            } else {
+              VP = (int(buff[1] << 8) + buff[2]) ;
+              VV = (int(buff[4] << 8) + buff[5]) ;
+              Number = atof(buff + 6);
+            }
+
+            return 1;
+          }
+        } else {
+          append = 0;
+          index = 0  ;
+          return 0;
+          break;
+        }
+        break;
+    }
+  }
+  return 0;
+}
